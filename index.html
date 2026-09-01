@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Piano System - Status & Progression</title>
+  
+  <!-- Configuración PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00d2ff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PianoSystem">
+  
+  <style>
+    :root {
+      --bg-color: #040814;
+      --panel-bg: rgba(10, 20, 40, 0.9);
+      --border-color: #00d2ff;
+      --text-color: #e0f7fc;
+      --accent-color: #00d2ff;
+      --exp-color: #ffb703;
+      --btn-bg: #002b47;
+      --btn-hover: #005885;
+      --glow-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      background-image: radial-gradient(circle at center, #0a1931 0%, #040814 100%);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* System Window */
+    .system-window {
+      background: var(--panel-bg);
+      border: 2px solid var(--border-color);
+      box-shadow: var(--glow-shadow), inset 0 0 15px rgba(0, 210, 255, 0.2);
+      border-radius: 4px;
+      padding: 25px;
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
+      position: relative;
+      backdrop-filter: blur(5px);
+    }
+
+    .system-window::before {
+      content: "STATUS WINDOW";
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-color);
+      padding: 0 12px;
+      color: var(--accent-color);
+      font-size: 11px;
+      letter-spacing: 3px;
+      border: 1px solid var(--border-color);
+    }
+
+    .system-title {
+      font-size: 18px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      text-shadow: 0 0 8px var(--accent-color);
+      margin-bottom: 20px;
+      border-bottom: 1px dashed rgba(0, 210, 255, 0.3);
+      padding-bottom: 10px;
+    }
+
+    /* Stats Grid */
+    .stats-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .stat-card {
+      background: rgba(2, 17, 29, 0.8);
+      border: 1px solid rgba(0, 210, 255, 0.4);
+      padding: 10px 12px;
+      border-radius: 2px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: #5f8aad;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .stat-value.level {
+      color: var(--accent-color);
+      text-shadow: 0 0 5px var(--accent-color);
+    }
+
+    .stat-value.streak {
+      color: #ff6b6b;
+      text-shadow: 0 0 5px #ff6b6b;
+    }
+
+    /* EXP Section */
+    .exp-section {
+      background: rgba(2, 17, 29, 0.8);
+      border: 1px solid rgba(0, 210, 255, 0.4);
+      padding: 12px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      margin-bottom: 6px;
+      color: var(--exp-color);
+    }
+
+    .exp-bar-container {
+      background: #02111d;
+      border: 1px solid var(--exp-color);
+      height: 12px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .exp-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #d48806, var(--exp-color));
+      box-shadow: 0 0 8px var(--exp-color);
+      transition: width 0.3s ease;
+    }
+
+    /* Daily Quest Divider */
+    .section-divider {
+      font-size: 11px;
+      color: #5f8aad;
+      letter-spacing: 2px;
+      margin: 15px 0 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-divider::before, .section-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(0, 210, 255, 0.3);
+    }
+
+    /* Timer */
+    .timer-display {
+      font-size: 34px;
+      font-weight: bold;
+      letter-spacing: 3px;
+      margin: 10px 0;
+      color: #ffffff;
+      text-shadow: 0 0 10px var(--accent-color);
+    }
+
+    .target-time {
+      font-size: 12px;
+      color: #5f8aad;
+      margin-bottom: 15px;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      background: #02111d;
+      border: 1px solid var(--border-color);
+      height: 16px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #005885, #00d2ff);
+      box-shadow: 0 0 10px var(--accent-color);
+      transition: width 0.3s ease;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    button {
+      flex: 1;
+      background: var(--btn-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 10px 0;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background: var(--btn-hover);
+      box-shadow: var(--glow-shadow);
+      color: #fff;
+    }
+
+    button:disabled {
+      border-color: #1a3a4b;
+      background: #081521;
+      color: #2c5269;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Modal / Overlay */
+    .completed-overlay {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(4, 8, 20, 0.95);
+      border: 2px solid #00ffcc;
+      box-shadow: 0 0 30px rgba(0, 255, 204, 0.6);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      animation: popup 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      padding: 20px;
+    }
+
+    @keyframes popup {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .completed-title {
+      color: #00ffcc;
+      font-size: 22px;
+      letter-spacing: 3px;
+      text-shadow: 0 0 15px #00ffcc;
+      margin-bottom: 10px;
+    }
+
+    .completed-desc {
+      color: #e0f7fc;
+      font-size: 13px;
+      margin-bottom: 20px;
+      line-height: 1.4;
+      white-space: pre-line;
+    }
+
+    .close-btn {
+      padding: 8px 20px;
+      border-color: #00ffcc;
+      color: #00ffcc;
+      background: transparent;
+    }
+
+    .close-btn:hover {
+      background: #00ffcc;
+      color: #000;
+      box-shadow: 0 0 15px #00ffcc;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="system-window">
+    <div class="system-title">━━━━━━━━ PIANO SYSTEM ━━━━━━━━</div>
+
+    <!-- Stats Block -->
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-label">Nivel Pianista</div>
+        <div class="stat-value level" id="levelVal">LVL 1</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Racha Diaria</div>
+        <div class="stat-value streak" id="streakVal">🔥 0 DÍAS</div>
+      </div>
+      <div class="stat-card" style="grid-column: span 2;">
+        <div class="stat-label">Total Practicado</div>
+        <div class="stat-value" id="totalTimeVal">0h 00m</div>
+      </div>
+    </div>
+
+    <!-- EXP Progress -->
+    <div class="exp-section">
+      <div class="exp-header">
+        <span>EXPERIENCIA (EXP)</span>
+        <span id="expText">0 / 100 EXP</span>
+      </div>
+      <div class="exp-bar-container">
+        <div class="exp-bar" id="expBar"></div>
+      </div>
+    </div>
+
+    <!-- Daily Quest Section -->
+    <div class="section-divider">MISIÓN DIARIA</div>
+
+    <div class="timer-display" id="timer">03:00:00</div>
+    <div class="target-time">TIEMPO RESTANTE HOY</div>
+
+    <div class="progress-container">
+      <div class="progress-bar" id="progress"></div>
+    </div>
+
+    <div class="controls">
+      <button id="startBtn">▶ INICIAR</button>
+      <button id="pauseBtn" disabled>⏸ PAUSAR</button>
+      <button id="resetBtn">🔄 REINICIAR HOY</button>
+    </div>
+
+    <!-- Completion Modal -->
+    <div class="completed-overlay" id="completedOverlay">
+      <div class="completed-title">¡MISIÓN COMPLETADA!</div>
+      <div class="completed-desc" id="overlayDesc">Has cumplido con la práctica diaria.</div>
+      <button class="close-btn" id="closeOverlayBtn">ACEPTAR</button>
+    </div>
+  </div>
+
+  <script>
+    // Registro del Service Worker para funcionamiento PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Registration failed', err));
+    }
+
+    const DAILY_TARGET_SECONDS = 3 * 3600; // 3 horas
+    const EXP_PER_MINUTE = 1;
+    const EXP_PER_LEVEL = 100;
+
+    let remainingSeconds = DAILY_TARGET_SECONDS;
+    let totalSecondsPracticed = 0;
+    let currentExp = 0;
+    let currentLevel = 1;
+    let streakDays = 0;
+    let lastPracticeDate = null;
+    let questCompletedToday = false;
+
+    let timerInterval = null;
+    let audioCtx = null;
+    let expectedEndTime = null;
+    let lastTickTime = null;
+
+    const timerDisplay = document.getElementById('timer');
+    const progressBar = document.getElementById('progress');
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const completedOverlay = document.getElementById('completedOverlay');
+    const overlayDesc = document.getElementById('overlayDesc');
+    const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+
+    const levelVal = document.getElementById('levelVal');
+    const streakVal = document.getElementById('streakVal');
+    const totalTimeVal = document.getElementById('totalTimeVal');
+    const expText = document.getElementById('expText');
+    const expBar = document.getElementById('expBar');
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playAlarmSound() {
+      try {
+        initAudioContext();
+        const now = audioCtx.currentTime;
+        
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(523.25, now);
+        gain1.gain.setValueAtTime(0.3, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.4);
+
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(1046.50, now + 0.2);
+        gain2.gain.setValueAtTime(0.4, now + 0.2);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(now + 0.2);
+        osc2.stop(now + 0.8);
+      } catch (e) {
+        console.warn("No se pudo reproducir el sonido:", e);
+      }
+    }
+
+    function loadData() {
+      const savedData = localStorage.getItem('piano_system_v2');
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        remainingSeconds = data.remainingSeconds ?? DAILY_TARGET_SECONDS;
+        totalSecondsPracticed = data.totalSecondsPracticed ?? 0;
+        currentExp = data.currentExp ?? 0;
+        currentLevel = data.currentLevel ?? 1;
+        streakDays = data.streakDays ?? 0;
+        lastPracticeDate = data.lastPracticeDate ?? null;
+        questCompletedToday = data.questCompletedTodayDate === todayStr;
+
+        if (data.currentDate !== todayStr) {
+          remainingSeconds = DAILY_TARGET_SECONDS;
+          questCompletedToday = false;
+          
+          if (lastPracticeDate) {
+            const last = new Date(lastPracticeDate);
+            const today = new Date(todayStr);
+            const diffDays = Math.floor((today - last) / (1000 * 60 * 60 * 24));
+            if (diffDays > 1) {
+              streakDays = 0;
+            }
+          }
+        }
+      }
+
+      updateUI();
+    }
+
+    function saveData() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const data = {
+        remainingSeconds,
+        totalSecondsPracticed,
+        currentExp,
+        currentLevel,
+        streakDays,
+        lastPracticeDate,
+        questCompletedTodayDate: questCompletedToday ? todayStr : null,
+        currentDate: todayStr
+      };
+      localStorage.setItem('piano_system_v2', JSON.stringify(data));
+    }
+
+    function formatTime(totalSecs) {
+      const hrs = Math.floor(totalSecs / 3600);
+      const mins = Math.floor((totalSecs % 3600) / 60);
+      const secs = totalSecs % 60;
+      const pad = (num) => String(num).padStart(2, '0');
+      return `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+    }
+
+    function addSecond() {
+      totalSecondsPracticed++;
+      if (totalSecondsPracticed % 60 === 0) {
+        currentExp += EXP_PER_MINUTE;
+        if (currentExp >= EXP_PER_LEVEL) {
+          currentExp -= EXP_PER_LEVEL;
+          currentLevel++;
+          showNotification(`¡SUBIDA DE NIVEL!\n¡Ahora eres Nivel ${currentLevel}!`);
+        }
+      }
+    }
+
+    function updateUI() {
+      timerDisplay.textContent = formatTime(remainingSeconds);
+      const elapsedDaily = DAILY_TARGET_SECONDS - remainingSeconds;
+      const dailyPercent = Math.min((elapsedDaily / DAILY_TARGET_SECONDS) * 100, 100);
+      progressBar.style.width = dailyPercent + '%';
+
+      levelVal.textContent = `LVL ${currentLevel}`;
+      streakVal.textContent = `🔥 ${streakDays} DÍAS`;
+      
+      const totalHrs = Math.floor(totalSecondsPracticed / 3600);
+      const totalMins = Math.floor((totalSecondsPracticed % 3600) / 60);
+      totalTimeVal.textContent = `${totalHrs}h ${totalMins}m`;
+
+      expText.textContent = `${currentExp} / ${EXP_PER_LEVEL} EXP`;
+      const expPercent = Math.min((currentExp / EXP_PER_LEVEL) * 100, 100);
+      expBar.style.width = expPercent + '%';
+    }
+
+    // Lógica precisa usando Date.now()
+    function startTimer() {
+      initAudioContext();
+      if (timerInterval || remainingSeconds <= 0) return;
+      
+      startBtn.disabled = true;
+      pauseBtn.disabled = false;
+
+      lastTickTime = Date.now();
+      expectedEndTime = Date.now() + (remainingSeconds * 1000);
+
+      timerInterval = setInterval(() => {
+        const now = Date.now();
+        const secondsRemainingReal = Math.max(0, Math.round((expectedEndTime - now) / 1000));
+        
+        // Sumar tiempo real transcurrido
+        const elapsedSecs = Math.round((now - lastTickTime) / 1000);
+        if (elapsedSecs > 0) {
+          for (let i = 0; i < elapsedSecs; i++) {
+            addSecond();
+          }
+          lastTickTime = now;
+        }
+
+        remainingSeconds = secondsRemainingReal;
+        updateUI();
+        saveData();
+
+        if (remainingSeconds <= 0) {
+          playAlarmSound();
+
+          if (!questCompletedToday) {
+            questCompletedToday = true;
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (lastPracticeDate !== todayStr) {
+              streakDays++;
+              lastPracticeDate = todayStr;
+            }
+
+            pauseTimer();
+            updateUI();
+            saveData();
+            showNotification('¡MISIÓN DIARIA COMPLETADA!\n+Racha incrementada');
+          } else {
+            pauseTimer();
+          }
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+    }
+
+    function resetTimer() {
+      if (confirm('¿Quieres reiniciar el temporizador de la misión de hoy? (Tus estadísticas globales se mantendrán)')) {
+        pauseTimer();
+        remainingSeconds = DAILY_TARGET_SECONDS;
+        updateUI();
+        saveData();
+      }
+    }
+
+    function showNotification(msg) {
+      overlayDesc.innerText = msg;
+      completedOverlay.style.display = 'flex';
+    }
+
+    startBtn.addEventListener('click', startTimer);
+    pauseBtn.addEventListener('click', pauseTimer);
+    resetBtn.addEventListener('click', resetTimer);
+    closeOverlayBtn.addEventListener('click', () => {
+      completedOverlay.style.display = 'none';
+    });
+
+    loadData();
+  </script>
+</body>
+</html>

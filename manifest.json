@@ -1,0 +1,17 @@
+{
+  "short_name": "PianoSystem",
+  "name": "Piano System - Solo Leveling",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2995/2995101.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#040814",
+  "theme_color": "#00d2ff",
+  "display": "standalone",
+  "orientation": "portrait"
+}
