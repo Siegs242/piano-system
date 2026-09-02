@@ -373,6 +373,7 @@
     let audioCtx = null;
     let expectedEndTime = null;
     let lastTickTime = null;
+    let vibrationInterval = null;
 
     const timerDisplay = document.getElementById('timer');
     const progressBar = document.getElementById('progress');
@@ -427,6 +428,25 @@
         osc2.stop(now + 0.8);
       } catch (e) {
         console.warn("No se pudo reproducir el sonido:", e);
+      }
+    }
+
+    function startVibration() {
+      if ('vibrate' in navigator) {
+        // Vibra 500ms y pausa 500ms
+        vibrationInterval = setInterval(() => {
+          navigator.vibrate([500, 500]);
+        }, 1000);
+      }
+    }
+
+    function stopVibration() {
+      if (vibrationInterval) {
+        clearInterval(vibrationInterval);
+        vibrationInterval = null;
+      }
+      if ('vibrate' in navigator) {
+        navigator.vibrate(0);
       }
     }
 
@@ -515,7 +535,6 @@
       expBar.style.width = expPercent + '%';
     }
 
-    // Lógica precisa usando Date.now()
     function startTimer() {
       initAudioContext();
       if (timerInterval || remainingSeconds <= 0) return;
@@ -530,7 +549,6 @@
         const now = Date.now();
         const secondsRemainingReal = Math.max(0, Math.round((expectedEndTime - now) / 1000));
         
-        // Sumar tiempo real transcurrido
         const elapsedSecs = Math.round((now - lastTickTime) / 1000);
         if (elapsedSecs > 0) {
           for (let i = 0; i < elapsedSecs; i++) {
@@ -560,6 +578,7 @@
             showNotification('¡MISIÓN DIARIA COMPLETADA!\n+Racha incrementada');
           } else {
             pauseTimer();
+            showNotification('¡TIEMPO FINALIZADO!');
           }
         }
       }, 1000);
@@ -584,12 +603,14 @@
     function showNotification(msg) {
       overlayDesc.innerText = msg;
       completedOverlay.style.display = 'flex';
+      startVibration(); // Inicia la vibración continua al mostrar el cuadro flotante
     }
 
     startBtn.addEventListener('click', startTimer);
     pauseBtn.addEventListener('click', pauseTimer);
     resetBtn.addEventListener('click', resetTimer);
     closeOverlayBtn.addEventListener('click', () => {
+      stopVibration(); // Detiene la vibración inmediatamente al presionar ACEPTAR
       completedOverlay.style.display = 'none';
     });
 
