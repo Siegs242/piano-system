@@ -259,7 +259,7 @@
 
     .target-desc {
       font-size: 10px;
-      color: #ffb703; /* Destacado en tono ámbar del sistema */
+      color: #ffb703;
       letter-spacing: 1px;
       margin-top: 4px;
       text-transform: uppercase;
@@ -389,7 +389,7 @@
     }
 
     .close-btn {
-      padding: 10px 24px;
+      ping: 10px 24px;
       border: 2px solid #ffb703;
       color: #ffb703;
       background: rgba(255, 183, 3, 0.1);
@@ -449,7 +449,7 @@
       <span class="exp-percentage" id="expPercentText">85%</span>
     </div>
 
-    <!-- Daily Quest Box con Hora Estimada de Finalización -->
+    <!-- Daily Quest Box -->
     <div class="mission-box">
       <div class="mission-title">Misión Diaria</div>
       <div class="timer-display" id="timer">03:00:00</div>
@@ -482,7 +482,7 @@
       navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Registration failed', err));
     }
 
-    const DAILY_TARGET_SECONDS = 3 * 3600; // 3 horas por defecto
+    const DAILY_TARGET_SECONDS = 3 * 3600; 
     const EXP_PER_MINUTE = 1;
 
     let remainingSeconds = DAILY_TARGET_SECONDS;
@@ -538,6 +538,81 @@
       }
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
+      }
+    }
+
+    // Efecto de sonido: INICIAR (Sonido ascendente tecnológico tipo "Quest Accepted")
+    function playStartSound() {
+      try {
+        initAudioContext();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(440, now); // Nota A4
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.15); // Sube a A5 rápido
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.25);
+      } catch (e) {
+        console.warn("Audio error:", e);
+      }
+    }
+
+    // Efecto de sonido: PAUSAR (Sonido descendente tecnológico de pausa)
+    function playPauseSound() {
+      try {
+        initAudioContext();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(587.33, now); // Nota D5
+        osc.frequency.exponentialRampToValueAtTime(293.66, now + 0.15); // Baja a D4
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.2);
+      } catch (e) {
+        console.warn("Audio error:", e);
+      }
+    }
+
+    // Efecto de sonido: REINICIAR / CLICK (Doble pulso rápido de sistema)
+    function playResetSound() {
+      try {
+        initAudioContext();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.setValueAtTime(600, now + 0.08);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.18);
+      } catch (e) {
+        console.warn("Audio error:", e);
       }
     }
 
@@ -664,7 +739,6 @@
     function updateUI() {
       timerDisplay.textContent = formatTime(remainingSeconds);
       
-      // Calcular hora estimada exacta de finalización
       const now = new Date();
       const finishDate = new Date(now.getTime() + (remainingSeconds * 1000));
       const timeString = finishDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -695,6 +769,8 @@
       initAudioContext();
       if (timerInterval || remainingSeconds <= 0) return;
       
+      playStartSound(); // 🔊 Efecto al iniciar
+
       startBtn.disabled = true;
       pauseBtn.disabled = false;
 
@@ -738,6 +814,9 @@
     }
 
     function pauseTimer() {
+      if (timerInterval) {
+        playPauseSound(); // 🔊 Efecto al pausar
+      }
       clearInterval(timerInterval);
       timerInterval = null;
       startBtn.disabled = false;
@@ -746,6 +825,7 @@
     }
 
     function resetTimer() {
+      playResetSound(); // 🔊 Efecto al pulsar reiniciar
       if (confirm('¿Quieres reiniciar el temporizador de la misión de hoy?')) {
         pauseTimer();
         remainingSeconds = DAILY_TARGET_SECONDS;
