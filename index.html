@@ -57,7 +57,7 @@
       border: 2px solid var(--border-color);
       box-shadow: var(--glow-shadow), inset 0 0 25px rgba(0, 210, 255, 0.15);
       border-radius: 2px;
-      padding: 22px 18px;
+      padding: 24px 18px;
       width: 100%;
       max-width: 500px;
       text-align: center;
@@ -65,7 +65,6 @@
       backdrop-filter: blur(8px);
     }
 
-    /* Esquinas decorativas estilo sci-fi */
     .system-window::before {
       content: "STATUS WINDOW";
       position: absolute;
@@ -91,17 +90,25 @@
       border: 1px solid rgba(0, 210, 255, 0.4);
     }
 
-    .system-title {
-      font-size: 14px;
-      letter-spacing: 4px;
-      color: #ffffff;
-      text-shadow: 0 0 8px var(--accent-color);
-      margin: 10px 0 16px 0;
-      border-bottom: 1px dashed rgba(0, 210, 255, 0.3);
-      padding-bottom: 8px;
+    /* Título principal estilo Solo Leveling enmarcado */
+    .system-title-container {
+      border: 1px solid rgba(0, 210, 255, 0.5);
+      background: rgba(0, 210, 255, 0.05);
+      padding: 10px;
+      margin: 8px 0 18px 0;
+      box-shadow: inset 0 0 10px rgba(0, 210, 255, 0.1);
     }
 
-    /* Stats Grid en 3 columnas como en la referencia */
+    .system-title {
+      font-size: 15px;
+      letter-spacing: 5px;
+      color: #ffffff;
+      text-shadow: 0 0 10px var(--accent-color), 0 0 20px rgba(0, 210, 255, 0.5);
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    /* Stats Grid en 3 columnas */
     .stats-container {
       display: grid;
       grid-template-columns: 1.1fr 1fr 1fr;
@@ -144,7 +151,6 @@
       text-shadow: 0 0 5px #ff6b6b;
     }
 
-    /* Mini barra de nivel en la tarjeta */
     .mini-exp-container {
       background: #02111d;
       border: 1px solid rgba(0, 210, 255, 0.5);
@@ -155,7 +161,7 @@
     }
 
     .mini-exp-bar {
-      width: 37%;
+      width: 0%;
       height: 100%;
       background: var(--accent-color);
       box-shadow: 0 0 5px var(--accent-color);
@@ -168,7 +174,7 @@
       text-align: right;
     }
 
-    /* EXP Section con formato de corchetes [=====] 85% */
+    /* EXP Section con corchetes */
     .exp-section {
       background: rgba(2, 17, 29, 0.9);
       border: 1px solid rgba(0, 210, 255, 0.4);
@@ -224,7 +230,7 @@
       text-align: right;
     }
 
-    /* Daily Quest Section */
+    /* Daily Quest Box */
     .mission-box {
       background: rgba(2, 17, 29, 0.7);
       border: 1px solid rgba(0, 210, 255, 0.5);
@@ -277,7 +283,7 @@
       transition: width 0.3s ease;
     }
 
-    /* Controls con estilo de botones cortados estilo Solo Leveling */
+    /* Controls */
     .controls {
       display: grid;
       grid-template-columns: 1fr 1fr 1.2fr;
@@ -402,9 +408,13 @@
 
   <div class="system-window">
     <div class="window-controls">_ [] X</div>
-    <div class="system-title">━━━━━━ PIANO SYSTEM ━━━━━━</div>
+    
+    <!-- Título principal enmarcado sin barras -->
+    <div class="system-title-container">
+      <div class="system-title">Piano System</div>
+    </div>
 
-    <!-- Stats Block en 3 Columnas -->
+    <!-- Stats Block -->
     <div class="stats-container">
       <div class="stat-card">
         <div class="stat-label">Nivel Pianista</div>
@@ -424,7 +434,7 @@
       </div>
     </div>
 
-    <!-- EXP Section con Corchetes estilo referencia -->
+    <!-- EXP Section -->
     <div class="exp-section">
       <span class="exp-label-text">EXP:</span>
       <div class="exp-bar-wrapper">
@@ -470,7 +480,7 @@
       navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Registration failed', err));
     }
 
-    const DAILY_TARGET_SECONDS = 3 * 3600; // 3 horas (cámbialo a 5 si quieres probar rápido)
+    const DAILY_TARGET_SECONDS = 3 * 3600; // Cámbialo a 5 para pruebas rápidas si lo deseas
     const EXP_PER_MINUTE = 1;
 
     let remainingSeconds = DAILY_TARGET_SECONDS;
@@ -580,7 +590,7 @@
     }
 
     function loadData() {
-      const savedData = localStorage.getItem('piano_system_v6');
+      const savedData = localStorage.getItem('piano_system_v7');
       const todayStr = new Date().toISOString().split('T')[0];
 
       if (savedData) {
@@ -622,7 +632,7 @@
         questCompletedTodayDate: questCompletedToday ? todayStr : null,
         currentDate: todayStr
       };
-      localStorage.setItem('piano_system_v6', JSON.stringify(data));
+      localStorage.setItem('piano_system_v7', JSON.stringify(data));
     }
 
     function formatTime(totalSecs) {
