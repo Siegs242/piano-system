@@ -416,7 +416,7 @@
       navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Registration failed', err));
     }
 
-    const DAILY_TARGET_SECONDS = 3 * 3600; // 3 horas
+    const DAILY_TARGET_SECONDS = 5; // 3 horas
     const EXP_PER_MINUTE = 1;
 
     let remainingSeconds = DAILY_TARGET_SECONDS;
