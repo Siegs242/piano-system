@@ -259,10 +259,12 @@
 
     .target-desc {
       font-size: 10px;
-      color: #7ca5c4;
+      color: #ffb703; /* Destacado en tono ámbar del sistema */
       letter-spacing: 1px;
       margin-top: 4px;
       text-transform: uppercase;
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(255, 183, 3, 0.4);
     }
 
     /* Progress Bar */
@@ -447,11 +449,11 @@
       <span class="exp-percentage" id="expPercentText">85%</span>
     </div>
 
-    <!-- Daily Quest Box -->
+    <!-- Daily Quest Box con Hora Estimada de Finalización -->
     <div class="mission-box">
       <div class="mission-title">Misión Diaria</div>
       <div class="timer-display" id="timer">03:00:00</div>
-      <div class="target-desc" id="objDesc">OBJETIVO: Completar 3 Horas de Práctica</div>
+      <div class="target-desc" id="finishTimeDesc">FIN ESTIMADO: --:--</div>
     </div>
 
     <!-- Progress Bar General -->
@@ -480,7 +482,7 @@
       navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Registration failed', err));
     }
 
-    const DAILY_TARGET_SECONDS = 3 * 3600; // Cámbialo a 5 para pruebas rápidas si lo deseas
+    const DAILY_TARGET_SECONDS = 3 * 3600; // 3 horas por defecto
     const EXP_PER_MINUTE = 1;
 
     let remainingSeconds = DAILY_TARGET_SECONDS;
@@ -498,6 +500,7 @@
     let alarmInterval = null;
 
     const timerDisplay = document.getElementById('timer');
+    const finishTimeDesc = document.getElementById('finishTimeDesc');
     const progressBar = document.getElementById('progress');
     const startBtn = document.getElementById('startBtn');
     const pauseBtn = document.getElementById('pauseBtn');
@@ -661,6 +664,12 @@
     function updateUI() {
       timerDisplay.textContent = formatTime(remainingSeconds);
       
+      // Calcular hora estimada exacta de finalización
+      const now = new Date();
+      const finishDate = new Date(now.getTime() + (remainingSeconds * 1000));
+      const timeString = finishDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      finishTimeDesc.textContent = `FIN ESTIMADO: ${timeString}`;
+
       const elapsedDaily = DAILY_TARGET_SECONDS - remainingSeconds;
       const dailyPercent = Math.min((elapsedDaily / DAILY_TARGET_SECONDS) * 100, 100);
       progressBar.style.width = dailyPercent + '%';
