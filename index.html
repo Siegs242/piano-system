@@ -12,6 +12,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="PianoSystem">
   
+  <!-- Icono para el móvil -->
+  <link rel="icon" type="image/svg+xml" href="piano-icon.svg">
+  <link rel="apple-touch-icon" href="piano-icon.svg">
+  
   <style>
     :root {
       --bg-color: #040814;
@@ -121,6 +125,15 @@
       text-shadow: 0 0 5px #ff6b6b;
     }
 
+    .rank-display {
+      font-size: 10px;
+      color: var(--exp-color);
+      letter-spacing: 1px;
+      margin-top: 3px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
     /* EXP Section */
     .exp-section {
       background: rgba(2, 17, 29, 0.8);
@@ -178,15 +191,24 @@
       font-size: 34px;
       font-weight: bold;
       letter-spacing: 3px;
-      margin: 10px 0;
+      margin: 10px 0 2px 0;
       color: #ffffff;
       text-shadow: 0 0 10px var(--accent-color);
     }
 
     .target-time {
-      font-size: 12px;
+      font-size: 11px;
       color: #5f8aad;
+      margin-bottom: 6px;
+    }
+
+    .eta-display {
+      font-size: 12px;
+      color: #00ffcc;
+      font-weight: bold;
+      letter-spacing: 1px;
       margin-bottom: 15px;
+      text-shadow: 0 0 5px rgba(0, 255, 204, 0.4);
     }
 
     /* Progress Bar */
@@ -241,7 +263,7 @@
       box-shadow: none;
     }
 
-    /* Modal / Overlay */
+    /* ── SOLO LEVELING / PIXEL QUEST OVERLAY ── */
     .completed-overlay {
       display: none;
       position: absolute;
@@ -249,49 +271,82 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(4, 8, 20, 0.95);
-      border: 2px solid #00ffcc;
-      box-shadow: 0 0 30px rgba(0, 255, 204, 0.6);
+      background: rgba(2, 6, 15, 0.96);
+      border: 3px solid #ffb703;
+      box-shadow: 0 0 40px rgba(255, 183, 3, 0.4), inset 0 0 25px rgba(255, 183, 3, 0.2);
       flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 10;
-      animation: popup 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: systemPopup 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       padding: 20px;
     }
 
-    @keyframes popup {
-      from { transform: scale(0.8); opacity: 0; }
+    @keyframes systemPopup {
+      from { transform: scale(0.7); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
 
+    .system-alert-tag {
+      font-size: 9px;
+      letter-spacing: 4px;
+      color: #ffb703;
+      border: 1px dashed #ffb703;
+      padding: 2px 8px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      background: rgba(255, 183, 3, 0.1);
+    }
+
+    /* Icono de Piano Pixel Art / Solo Leveling flotante */
+    .pixel-piano-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 0 8px #ffb703);
+      animation: floatIcon 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatIcon {
+      from { transform: translateY(0); }
+      to { transform: translateY(-5px); }
+    }
+
     .completed-title {
-      color: #00ffcc;
-      font-size: 22px;
+      color: #ffb703;
+      font-size: 20px;
       letter-spacing: 3px;
-      text-shadow: 0 0 15px #00ffcc;
+      text-shadow: 0 0 12px rgba(255, 183, 3, 0.8);
       margin-bottom: 10px;
+      font-weight: bold;
     }
 
     .completed-desc {
-      color: #e0f7fc;
-      font-size: 13px;
+      color: #ffffff;
+      font-size: 12px;
       margin-bottom: 20px;
-      line-height: 1.4;
+      line-height: 1.5;
       white-space: pre-line;
+      text-shadow: 0 0 5px rgba(0, 210, 255, 0.5);
+      border-top: 1px solid rgba(255, 183, 3, 0.3);
+      border-bottom: 1px solid rgba(255, 183, 3, 0.3);
+      padding: 10px 0;
+      width: 100%;
     }
 
     .close-btn {
-      padding: 8px 20px;
-      border-color: #00ffcc;
-      color: #00ffcc;
-      background: transparent;
+      padding: 10px 24px;
+      border: 2px solid #ffb703;
+      color: #ffb703;
+      background: rgba(255, 183, 3, 0.1);
+      font-weight: bold;
+      letter-spacing: 2px;
+      font-size: 11px;
     }
 
     .close-btn:hover {
-      background: #00ffcc;
+      background: #ffb703;
       color: #000;
-      box-shadow: 0 0 15px #00ffcc;
+      box-shadow: 0 0 20px #ffb703;
     }
   </style>
 </head>
@@ -304,15 +359,16 @@
     <div class="stats-container">
       <div class="stat-card">
         <div class="stat-label">Nivel Pianista</div>
-        <div class="stat-value level" id="levelVal">LVL 1</div>
+        <div class="stat-value level" id="levelVal">LVL 28</div>
+        <div class="rank-display" id="rankVal">RANGO D: DESPERTAR ARMÓNICO</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Racha Diaria</div>
-        <div class="stat-value streak" id="streakVal">🔥 0 DÍAS</div>
+        <div class="stat-value streak" id="streakVal">🔥 1 DÍAS</div>
       </div>
       <div class="stat-card" style="grid-column: span 2;">
         <div class="stat-label">Total Practicado</div>
-        <div class="stat-value" id="totalTimeVal">0h 00m</div>
+        <div class="stat-value" id="totalTimeVal">547h 30m</div>
       </div>
     </div>
 
@@ -320,7 +376,7 @@
     <div class="exp-section">
       <div class="exp-header">
         <span>EXPERIENCIA (EXP)</span>
-        <span id="expText">0 / 100 EXP</span>
+        <span id="expText">45 / 120 EXP</span>
       </div>
       <div class="exp-bar-container">
         <div class="exp-bar" id="expBar"></div>
@@ -332,6 +388,8 @@
 
     <div class="timer-display" id="timer">03:00:00</div>
     <div class="target-time">TIEMPO RESTANTE HOY</div>
+    
+    <div class="eta-display" id="etaDisplay">FIN ESTIMADO: --:--</div>
 
     <div class="progress-container">
       <div class="progress-bar" id="progress"></div>
@@ -343,29 +401,29 @@
       <button id="resetBtn">🔄 REINICIAR HOY</button>
     </div>
 
-    <!-- Completion Modal -->
+    <!-- Completion / Level Up Modal (Solo Leveling Style) -->
     <div class="completed-overlay" id="completedOverlay">
-      <div class="completed-title">¡MISIÓN COMPLETADA!</div>
+      <div class="system-alert-tag">⚠️ NOTIFICACIÓN DEL SISTEMA ⚠️</div>
+      <div class="pixel-piano-icon">🎹⚡</div>
+      <div class="completed-title" id="overlayTitle">¡LEVEL UP!</div>
       <div class="completed-desc" id="overlayDesc">Has cumplido con la práctica diaria.</div>
-      <button class="close-btn" id="closeOverlayBtn">ACEPTAR</button>
+      <button class="close-btn" id="closeOverlayBtn">CONFIRMAR</button>
     </div>
   </div>
 
   <script>
-    // Registro del Service Worker para funcionamiento PWA
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Registration failed', err));
     }
 
     const DAILY_TARGET_SECONDS = 3 * 3600; // 3 horas
     const EXP_PER_MINUTE = 1;
-    const EXP_PER_LEVEL = 100;
 
     let remainingSeconds = DAILY_TARGET_SECONDS;
-    let totalSecondsPracticed = 0;
-    let currentExp = 0;
-    let currentLevel = 1;
-    let streakDays = 0;
+    let totalSecondsPracticed = 547 * 3600 + 30 * 60; 
+    let currentExp = 45;
+    let currentLevel = 28;
+    let streakDays = 1;
     let lastPracticeDate = null;
     let questCompletedToday = false;
 
@@ -373,22 +431,38 @@
     let audioCtx = null;
     let expectedEndTime = null;
     let lastTickTime = null;
-    let vibrationInterval = null;
+    let alarmInterval = null;
 
     const timerDisplay = document.getElementById('timer');
+    const etaDisplay = document.getElementById('etaDisplay');
     const progressBar = document.getElementById('progress');
     const startBtn = document.getElementById('startBtn');
     const pauseBtn = document.getElementById('pauseBtn');
     const resetBtn = document.getElementById('resetBtn');
     const completedOverlay = document.getElementById('completedOverlay');
+    const overlayTitle = document.getElementById('overlayTitle');
     const overlayDesc = document.getElementById('overlayDesc');
     const closeOverlayBtn = document.getElementById('closeOverlayBtn');
 
     const levelVal = document.getElementById('levelVal');
+    const rankVal = document.getElementById('rankVal');
     const streakVal = document.getElementById('streakVal');
     const totalTimeVal = document.getElementById('totalTimeVal');
     const expText = document.getElementById('expText');
     const expBar = document.getElementById('expBar');
+
+    function getExpRequiredForLevel(level) {
+      if (level >= 100) return 99999;
+      return Math.round(15 * Math.pow(1.082, level - 1) + 5);
+    }
+
+    function getRankName(level) {
+      if (level <= 15) return "RANGO E: NOVICIO DE LAS TECLAS";
+      if (level <= 40) return "RANGO D: DESPERTAR ARMÓNICO";
+      if (level <= 70) return "RANGO C: MONARCA DEL RITMO";
+      if (level <= 90) return "RANGO B: CALAMIDAD DE MARFIL";
+      return "RANGO S: VIRTUOSO TRASCENDENTE";
+    }
 
     function initAudioContext() {
       if (!audioCtx) {
@@ -400,67 +474,69 @@
       }
     }
 
-    function playAlarmSound() {
+    function playAlarmBeep() {
       try {
         initAudioContext();
         const now = audioCtx.currentTime;
-        
-        const osc1 = audioCtx.createOscillator();
-        const gain1 = audioCtx.createGain();
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(523.25, now);
-        gain1.gain.setValueAtTime(0.3, now);
-        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-        osc1.connect(gain1);
-        gain1.connect(audioCtx.destination);
-        osc1.start(now);
-        osc1.stop(now + 0.4);
 
-        const osc2 = audioCtx.createOscillator();
-        const gain2 = audioCtx.createGain();
-        osc2.type = 'triangle';
-        osc2.frequency.setValueAtTime(1046.50, now + 0.2);
-        gain2.gain.setValueAtTime(0.4, now + 0.2);
-        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
-        osc2.connect(gain2);
-        gain2.connect(audioCtx.destination);
-        osc2.start(now + 0.2);
-        osc2.stop(now + 0.8);
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(880, now);
+        osc.frequency.setValueAtTime(1760, now + 0.1);
+
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.3);
       } catch (e) {
-        console.warn("No se pudo reproducir el sonido:", e);
+        console.warn("Error reproduciendo beep de alarma:", e);
       }
     }
 
-    function startVibration() {
-      if ('vibrate' in navigator) {
-        // Vibra 500ms y pausa 500ms
-        vibrationInterval = setInterval(() => {
-          navigator.vibrate([500, 500]);
-        }, 1000);
-      }
+    function startAlarmLoop() {
+      stopAlarmLoop();
+      playAlarmBeep();
+      triggerVibration();
+
+      alarmInterval = setInterval(() => {
+        playAlarmBeep();
+        triggerVibration();
+      }, 800);
     }
 
-    function stopVibration() {
-      if (vibrationInterval) {
-        clearInterval(vibrationInterval);
-        vibrationInterval = null;
+    function stopAlarmLoop() {
+      if (alarmInterval) {
+        clearInterval(alarmInterval);
+        alarmInterval = null;
       }
       if ('vibrate' in navigator) {
         navigator.vibrate(0);
       }
     }
 
+    function triggerVibration() {
+      if ('vibrate' in navigator) {
+        navigator.vibrate([200, 100, 200, 100, 400]);
+      }
+    }
+
     function loadData() {
-      const savedData = localStorage.getItem('piano_system_v2');
+      const savedData = localStorage.getItem('piano_system_v5');
       const todayStr = new Date().toISOString().split('T')[0];
 
       if (savedData) {
         const data = JSON.parse(savedData);
         remainingSeconds = data.remainingSeconds ?? DAILY_TARGET_SECONDS;
-        totalSecondsPracticed = data.totalSecondsPracticed ?? 0;
-        currentExp = data.currentExp ?? 0;
-        currentLevel = data.currentLevel ?? 1;
-        streakDays = data.streakDays ?? 0;
+        totalSecondsPracticed = data.totalSecondsPracticed ?? totalSecondsPracticed;
+        currentExp = data.currentExp ?? currentExp;
+        currentLevel = data.currentLevel ?? currentLevel;
+        streakDays = data.streakDays ?? streakDays;
         lastPracticeDate = data.lastPracticeDate ?? null;
         questCompletedToday = data.questCompletedTodayDate === todayStr;
 
@@ -478,7 +554,6 @@
           }
         }
       }
-
       updateUI();
     }
 
@@ -494,7 +569,7 @@
         questCompletedTodayDate: questCompletedToday ? todayStr : null,
         currentDate: todayStr
       };
-      localStorage.setItem('piano_system_v2', JSON.stringify(data));
+      localStorage.setItem('piano_system_v5', JSON.stringify(data));
     }
 
     function formatTime(totalSecs) {
@@ -505,33 +580,56 @@
       return `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
     }
 
+    function calculateETA() {
+      if (remainingSeconds <= 0) return "COMPLETADO";
+      const now = new Date();
+      const finishTime = new Date(now.getTime() + (remainingSeconds * 1000));
+      const hrs = String(finishTime.getHours()).padStart(2, '0');
+      const mins = String(finishTime.getMinutes()).padStart(2, '0');
+      return `${hrs}:${mins}`;
+    }
+
     function addSecond() {
       totalSecondsPracticed++;
       if (totalSecondsPracticed % 60 === 0) {
         currentExp += EXP_PER_MINUTE;
-        if (currentExp >= EXP_PER_LEVEL) {
-          currentExp -= EXP_PER_LEVEL;
+        let expRequired = getExpRequiredForLevel(currentLevel);
+        
+        while (currentExp >= expRequired) {
+          currentExp -= expRequired;
           currentLevel++;
-          showNotification(`¡SUBIDA DE NIVEL!\n¡Ahora eres Nivel ${currentLevel}!`);
+          expRequired = getExpRequiredForLevel(currentLevel);
+          showNotification("¡LEVEL UP!", `¡Has alcanzado el Nivel ${currentLevel}!\n${getRankName(currentLevel)}`, true);
         }
       }
     }
 
     function updateUI() {
       timerDisplay.textContent = formatTime(remainingSeconds);
+      
+      const etaTime = calculateETA();
+      if (etaTime === "COMPLETADO") {
+        etaDisplay.textContent = "¡MISIÓN COMPLETADA HOY!";
+      } else {
+        const statusPrefix = timerInterval ? "FIN ESTIMADO" : "TERMINARÍAS A LAS";
+        etaDisplay.textContent = `${statusPrefix}: ${etaTime}`;
+      }
+
       const elapsedDaily = DAILY_TARGET_SECONDS - remainingSeconds;
       const dailyPercent = Math.min((elapsedDaily / DAILY_TARGET_SECONDS) * 100, 100);
       progressBar.style.width = dailyPercent + '%';
 
       levelVal.textContent = `LVL ${currentLevel}`;
+      rankVal.textContent = getRankName(currentLevel);
       streakVal.textContent = `🔥 ${streakDays} DÍAS`;
       
       const totalHrs = Math.floor(totalSecondsPracticed / 3600);
       const totalMins = Math.floor((totalSecondsPracticed % 3600) / 60);
       totalTimeVal.textContent = `${totalHrs}h ${totalMins}m`;
 
-      expText.textContent = `${currentExp} / ${EXP_PER_LEVEL} EXP`;
-      const expPercent = Math.min((currentExp / EXP_PER_LEVEL) * 100, 100);
+      const expRequired = getExpRequiredForLevel(currentLevel);
+      expText.textContent = `${currentExp} / ${expRequired} EXP`;
+      const expPercent = Math.min((currentExp / expRequired) * 100, 100);
       expBar.style.width = expPercent + '%';
     }
 
@@ -562,7 +660,7 @@
         saveData();
 
         if (remainingSeconds <= 0) {
-          playAlarmSound();
+          pauseTimer();
 
           if (!questCompletedToday) {
             questCompletedToday = true;
@@ -571,14 +669,11 @@
               streakDays++;
               lastPracticeDate = todayStr;
             }
-
-            pauseTimer();
             updateUI();
             saveData();
-            showNotification('¡MISIÓN DIARIA COMPLETADA!\n+Racha incrementada');
+            showNotification("¡MISIÓN CUMPLIDA!", "Has completado tu entrenamiento diario.\n+Racha de días incrementada.", true);
           } else {
-            pauseTimer();
-            showNotification('¡TIEMPO FINALIZADO!');
+            showNotification("¡TIEMPO FINALIZADO!", "Sesión de práctica concluida.", true);
           }
         }
       }, 1000);
@@ -589,6 +684,7 @@
       timerInterval = null;
       startBtn.disabled = false;
       pauseBtn.disabled = true;
+      updateUI();
     }
 
     function resetTimer() {
@@ -600,17 +696,26 @@
       }
     }
 
-    function showNotification(msg) {
+    function showNotification(title, msg, isAlarm) {
+      overlayTitle.innerText = title;
       overlayDesc.innerText = msg;
       completedOverlay.style.display = 'flex';
-      startVibration(); // Inicia la vibración continua al mostrar el cuadro flotante
+      
+      if (isAlarm) {
+        startAlarmLoop();
+      }
     }
 
-    startBtn.addEventListener('click', startTimer);
+    startBtn.addEventListener('click', () => {
+      initAudioContext();
+      startTimer();
+    });
+    
     pauseBtn.addEventListener('click', pauseTimer);
     resetBtn.addEventListener('click', resetTimer);
+    
     closeOverlayBtn.addEventListener('click', () => {
-      stopVibration(); // Detiene la vibración inmediatamente al presionar ACEPTAR
+      stopAlarmLoop();
       completedOverlay.style.display = 'none';
     });
 
