@@ -18,15 +18,15 @@
   
   <style>
     :root {
-      --bg-color: #040814;
-      --panel-bg: rgba(10, 20, 40, 0.9);
+      --bg-color: #030712;
+      --panel-bg: rgba(4, 13, 26, 0.95);
       --border-color: #00d2ff;
       --text-color: #e0f7fc;
       --accent-color: #00d2ff;
       --exp-color: #ffb703;
-      --btn-bg: #002b47;
-      --btn-hover: #005885;
-      --glow-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+      --btn-bg: #00223b;
+      --btn-hover: #004b7a;
+      --glow-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
     }
 
     * {
@@ -38,79 +38,96 @@
 
     body {
       background-color: var(--bg-color);
-      background-image: radial-gradient(circle at center, #0a1931 0%, #040814 100%);
+      background-image: 
+        radial-gradient(circle at center, #081b33 0%, #030712 100%),
+        linear-gradient(rgba(0, 210, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 20px 20px, 20px 20px;
       color: var(--text-color);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 20px;
+      padding: 15px;
     }
 
-    /* System Window */
+    /* System Window con marco tecnológico de Solo Leveling */
     .system-window {
       background: var(--panel-bg);
       border: 2px solid var(--border-color);
-      box-shadow: var(--glow-shadow), inset 0 0 15px rgba(0, 210, 255, 0.2);
-      border-radius: 4px;
-      padding: 25px;
+      box-shadow: var(--glow-shadow), inset 0 0 25px rgba(0, 210, 255, 0.15);
+      border-radius: 2px;
+      padding: 22px 18px;
       width: 100%;
-      max-width: 440px;
+      max-width: 500px;
       text-align: center;
       position: relative;
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(8px);
     }
 
+    /* Esquinas decorativas estilo sci-fi */
     .system-window::before {
       content: "STATUS WINDOW";
       position: absolute;
       top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 15px;
       background: var(--bg-color);
-      padding: 0 12px;
+      padding: 0 10px;
       color: var(--accent-color);
       font-size: 11px;
-      letter-spacing: 3px;
+      letter-spacing: 2px;
       border: 1px solid var(--border-color);
     }
 
-    .system-title {
-      font-size: 18px;
-      letter-spacing: 3px;
-      color: #ffffff;
-      text-shadow: 0 0 8px var(--accent-color);
-      margin-bottom: 20px;
-      border-bottom: 1px dashed rgba(0, 210, 255, 0.3);
-      padding-bottom: 10px;
+    .window-controls {
+      position: absolute;
+      top: -10px;
+      right: 15px;
+      background: var(--bg-color);
+      padding: 0 8px;
+      color: #5f8aad;
+      font-size: 10px;
+      letter-spacing: 2px;
+      border: 1px solid rgba(0, 210, 255, 0.4);
     }
 
-    /* Stats Grid */
+    .system-title {
+      font-size: 14px;
+      letter-spacing: 4px;
+      color: #ffffff;
+      text-shadow: 0 0 8px var(--accent-color);
+      margin: 10px 0 16px 0;
+      border-bottom: 1px dashed rgba(0, 210, 255, 0.3);
+      padding-bottom: 8px;
+    }
+
+    /* Stats Grid en 3 columnas como en la referencia */
     .stats-container {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
+      grid-template-columns: 1.1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 15px;
       text-align: left;
     }
 
     .stat-card {
-      background: rgba(2, 17, 29, 0.8);
+      background: rgba(2, 17, 29, 0.9);
       border: 1px solid rgba(0, 210, 255, 0.4);
-      padding: 10px 12px;
+      padding: 8px 10px;
       border-radius: 2px;
     }
 
     .stat-label {
-      font-size: 10px;
-      color: #5f8aad;
-      letter-spacing: 1px;
+      font-size: 9px;
+      color: #7ca5c4;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
       margin-bottom: 4px;
+      line-height: 1.2;
     }
 
     .stat-value {
-      font-size: 18px;
+      font-size: 13px;
       font-weight: bold;
       color: #ffffff;
     }
@@ -118,6 +135,8 @@
     .stat-value.level {
       color: var(--accent-color);
       text-shadow: 0 0 5px var(--accent-color);
+      font-size: 12px;
+      margin-bottom: 4px;
     }
 
     .stat-value.streak {
@@ -125,38 +144,68 @@
       text-shadow: 0 0 5px #ff6b6b;
     }
 
-    .rank-display {
-      font-size: 10px;
-      color: var(--exp-color);
-      letter-spacing: 1px;
-      margin-top: 3px;
-      text-transform: uppercase;
-      font-weight: bold;
+    /* Mini barra de nivel en la tarjeta */
+    .mini-exp-container {
+      background: #02111d;
+      border: 1px solid rgba(0, 210, 255, 0.5);
+      height: 6px;
+      border-radius: 1px;
+      overflow: hidden;
+      margin-top: 2px;
     }
 
-    /* EXP Section */
+    .mini-exp-bar {
+      width: 37%;
+      height: 100%;
+      background: var(--accent-color);
+      box-shadow: 0 0 5px var(--accent-color);
+    }
+
+    .mini-exp-text {
+      font-size: 8px;
+      color: #7ca5c4;
+      margin-top: 2px;
+      text-align: right;
+    }
+
+    /* EXP Section con formato de corchetes [=====] 85% */
     .exp-section {
-      background: rgba(2, 17, 29, 0.8);
+      background: rgba(2, 17, 29, 0.9);
       border: 1px solid rgba(0, 210, 255, 0.4);
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 2px;
-      margin-bottom: 20px;
-      text-align: left;
-    }
-
-    .exp-header {
+      margin-bottom: 18px;
       display: flex;
+      align-items: center;
       justify-content: space-between;
       font-size: 11px;
-      margin-bottom: 6px;
+    }
+
+    .exp-label-text {
       color: var(--exp-color);
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .exp-bar-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      margin: 0 10px;
+    }
+
+    .exp-brackets {
+      color: var(--exp-color);
+      font-weight: bold;
     }
 
     .exp-bar-container {
       background: #02111d;
       border: 1px solid var(--exp-color);
-      height: 12px;
-      border-radius: 2px;
+      height: 10px;
+      flex: 1;
+      border-radius: 1px;
       overflow: hidden;
     }
 
@@ -168,56 +217,55 @@
       transition: width 0.3s ease;
     }
 
-    /* Daily Quest Divider */
-    .section-divider {
-      font-size: 11px;
-      color: #5f8aad;
-      letter-spacing: 2px;
-      margin: 15px 0 10px 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .exp-percentage {
+      color: var(--exp-color);
+      font-weight: bold;
+      min-width: 36px;
+      text-align: right;
     }
 
-    .section-divider::before, .section-divider::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: rgba(0, 210, 255, 0.3);
+    /* Daily Quest Section */
+    .mission-box {
+      background: rgba(2, 17, 29, 0.7);
+      border: 1px solid rgba(0, 210, 255, 0.5);
+      border-radius: 2px;
+      padding: 15px 10px;
+      margin-bottom: 15px;
+      position: relative;
     }
 
-    /* Timer */
+    .mission-title {
+      font-size: 10px;
+      color: #7ca5c4;
+      letter-spacing: 3px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
     .timer-display {
-      font-size: 34px;
+      font-size: 38px;
       font-weight: bold;
       letter-spacing: 3px;
-      margin: 10px 0 2px 0;
+      margin: 5px 0;
       color: #ffffff;
-      text-shadow: 0 0 10px var(--accent-color);
+      text-shadow: 0 0 12px var(--accent-color);
     }
 
-    .target-time {
-      font-size: 11px;
-      color: #5f8aad;
-      margin-bottom: 6px;
-    }
-
-    .eta-display {
-      font-size: 12px;
-      color: #00ffcc;
-      font-weight: bold;
+    .target-desc {
+      font-size: 10px;
+      color: #7ca5c4;
       letter-spacing: 1px;
-      margin-bottom: 15px;
-      text-shadow: 0 0 5px rgba(0, 255, 204, 0.4);
+      margin-top: 4px;
+      text-transform: uppercase;
     }
 
     /* Progress Bar */
     .progress-container {
       background: #02111d;
       border: 1px solid var(--border-color);
-      height: 16px;
-      border-radius: 2px;
-      margin-bottom: 20px;
+      height: 8px;
+      border-radius: 1px;
+      margin-bottom: 15px;
       overflow: hidden;
     }
 
@@ -229,24 +277,24 @@
       transition: width 0.3s ease;
     }
 
-    /* Controls */
+    /* Controls con estilo de botones cortados estilo Solo Leveling */
     .controls {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
       gap: 8px;
     }
 
     button {
-      flex: 1;
       background: var(--btn-bg);
       border: 1px solid var(--border-color);
       color: var(--text-color);
-      padding: 10px 0;
-      font-size: 11px;
+      padding: 10px 4px;
+      font-size: 10px;
       font-weight: bold;
       letter-spacing: 1px;
       cursor: pointer;
       transition: all 0.2s ease;
+      clip-path: polygon(8% 0, 100% 0, 100% 80%, 92% 100%, 0 100%, 0 20%);
     }
 
     button:hover {
@@ -263,7 +311,7 @@
       box-shadow: none;
     }
 
-    /* ── SOLO LEVELING / PIXEL QUEST OVERLAY ── */
+    /* ── SOLO LEVELING NOTIFICATION OVERLAY ── */
     .completed-overlay {
       display: none;
       position: absolute;
@@ -298,7 +346,6 @@
       background: rgba(255, 183, 3, 0.1);
     }
 
-    /* Icono de Piano Pixel Art / Solo Leveling flotante */
     .pixel-piano-icon {
       font-size: 32px;
       margin-bottom: 8px;
@@ -341,6 +388,7 @@
       font-weight: bold;
       letter-spacing: 2px;
       font-size: 11px;
+      clip-path: none;
     }
 
     .close-btn:hover {
@@ -353,44 +401,50 @@
 <body>
 
   <div class="system-window">
-    <div class="system-title">━━━━━━━━ PIANO SYSTEM ━━━━━━━━</div>
+    <div class="window-controls">_ [] X</div>
+    <div class="system-title">━━━━━━ PIANO SYSTEM ━━━━━━</div>
 
-    <!-- Stats Block -->
+    <!-- Stats Block en 3 Columnas -->
     <div class="stats-container">
       <div class="stat-card">
         <div class="stat-label">Nivel Pianista</div>
-        <div class="stat-value level" id="levelVal">LVL 28</div>
-        <div class="rank-display" id="rankVal">RANGO D: DESPERTAR ARMÓNICO</div>
+        <div class="stat-value level" id="levelVal">LVL 37</div>
+        <div class="mini-exp-container">
+          <div class="mini-exp-bar" id="miniExpBar"></div>
+        </div>
+        <div class="mini-exp-text" id="miniExpText">37%</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Racha Diaria</div>
-        <div class="stat-value streak" id="streakVal">🔥 1 DÍAS</div>
+        <div class="stat-value streak" id="streakVal">🔥 547 DÍAS</div>
       </div>
-      <div class="stat-card" style="grid-column: span 2;">
+      <div class="stat-card">
         <div class="stat-label">Total Practicado</div>
-        <div class="stat-value" id="totalTimeVal">547h 30m</div>
+        <div class="stat-value" id="totalTimeVal" style="font-size: 11px; margin-top: 2px;">820h 0m</div>
       </div>
     </div>
 
-    <!-- EXP Progress -->
+    <!-- EXP Section con Corchetes estilo referencia -->
     <div class="exp-section">
-      <div class="exp-header">
-        <span>EXPERIENCIA (EXP)</span>
-        <span id="expText">45 / 120 EXP</span>
+      <span class="exp-label-text">EXP:</span>
+      <div class="exp-bar-wrapper">
+        <span class="exp-brackets">[</span>
+        <div class="exp-bar-container">
+          <div class="exp-bar" id="expBar"></div>
+        </div>
+        <span class="exp-brackets">]</span>
       </div>
-      <div class="exp-bar-container">
-        <div class="exp-bar" id="expBar"></div>
-      </div>
+      <span class="exp-percentage" id="expPercentText">85%</span>
     </div>
 
-    <!-- Daily Quest Section -->
-    <div class="section-divider">MISIÓN DIARIA</div>
+    <!-- Daily Quest Box -->
+    <div class="mission-box">
+      <div class="mission-title">Misión Diaria</div>
+      <div class="timer-display" id="timer">03:00:00</div>
+      <div class="target-desc" id="objDesc">OBJETIVO: Completar 3 Horas de Práctica</div>
+    </div>
 
-    <div class="timer-display" id="timer">03:00:00</div>
-    <div class="target-time">TIEMPO RESTANTE HOY</div>
-    
-    <div class="eta-display" id="etaDisplay">FIN ESTIMADO: --:--</div>
-
+    <!-- Progress Bar General -->
     <div class="progress-container">
       <div class="progress-bar" id="progress"></div>
     </div>
@@ -398,10 +452,10 @@
     <div class="controls">
       <button id="startBtn">▶ INICIAR</button>
       <button id="pauseBtn" disabled>⏸ PAUSAR</button>
-      <button id="resetBtn">🔄 REINICIAR HOY</button>
+      <button id="resetBtn">🔄 REINICIAR</button>
     </div>
 
-    <!-- Completion / Level Up Modal (Solo Leveling Style) -->
+    <!-- Completion / Level Up Modal -->
     <div class="completed-overlay" id="completedOverlay">
       <div class="system-alert-tag">⚠️ NOTIFICACIÓN DEL SISTEMA ⚠️</div>
       <div class="pixel-piano-icon">🎹⚡</div>
@@ -416,14 +470,14 @@
       navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Registration failed', err));
     }
 
-    const DAILY_TARGET_SECONDS = 3 * 3600; // 3 horas
+    const DAILY_TARGET_SECONDS = 3 * 3600; // 3 horas (cámbialo a 5 si quieres probar rápido)
     const EXP_PER_MINUTE = 1;
 
     let remainingSeconds = DAILY_TARGET_SECONDS;
-    let totalSecondsPracticed = 547 * 3600 + 30 * 60; 
-    let currentExp = 45;
-    let currentLevel = 28;
-    let streakDays = 1;
+    let totalSecondsPracticed = 820 * 3600; 
+    let currentExp = 120;
+    let currentLevel = 37;
+    let streakDays = 547;
     let lastPracticeDate = null;
     let questCompletedToday = false;
 
@@ -434,7 +488,6 @@
     let alarmInterval = null;
 
     const timerDisplay = document.getElementById('timer');
-    const etaDisplay = document.getElementById('etaDisplay');
     const progressBar = document.getElementById('progress');
     const startBtn = document.getElementById('startBtn');
     const pauseBtn = document.getElementById('pauseBtn');
@@ -445,11 +498,12 @@
     const closeOverlayBtn = document.getElementById('closeOverlayBtn');
 
     const levelVal = document.getElementById('levelVal');
-    const rankVal = document.getElementById('rankVal');
     const streakVal = document.getElementById('streakVal');
     const totalTimeVal = document.getElementById('totalTimeVal');
-    const expText = document.getElementById('expText');
     const expBar = document.getElementById('expBar');
+    const expPercentText = document.getElementById('expPercentText');
+    const miniExpBar = document.getElementById('miniExpBar');
+    const miniExpText = document.getElementById('miniExpText');
 
     function getExpRequiredForLevel(level) {
       if (level >= 100) return 99999;
@@ -457,11 +511,11 @@
     }
 
     function getRankName(level) {
-      if (level <= 15) return "RANGO E: NOVICIO DE LAS TECLAS";
-      if (level <= 40) return "RANGO D: DESPERTAR ARMÓNICO";
-      if (level <= 70) return "RANGO C: MONARCA DEL RITMO";
-      if (level <= 90) return "RANGO B: CALAMIDAD DE MARFIL";
-      return "RANGO S: VIRTUOSO TRASCENDENTE";
+      if (level <= 15) return "RANGO E";
+      if (level <= 40) return "RANGO D";
+      if (level <= 70) return "RANGO C";
+      if (level <= 90) return "RANGO B";
+      return "RANGO S";
     }
 
     function initAudioContext() {
@@ -478,7 +532,6 @@
       try {
         initAudioContext();
         const now = audioCtx.currentTime;
-
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
 
@@ -495,7 +548,7 @@
         osc.start(now);
         osc.stop(now + 0.3);
       } catch (e) {
-        console.warn("Error reproduciendo beep de alarma:", e);
+        console.warn("Error reproduciendo beep:", e);
       }
     }
 
@@ -527,7 +580,7 @@
     }
 
     function loadData() {
-      const savedData = localStorage.getItem('piano_system_v5');
+      const savedData = localStorage.getItem('piano_system_v6');
       const todayStr = new Date().toISOString().split('T')[0];
 
       if (savedData) {
@@ -569,7 +622,7 @@
         questCompletedTodayDate: questCompletedToday ? todayStr : null,
         currentDate: todayStr
       };
-      localStorage.setItem('piano_system_v5', JSON.stringify(data));
+      localStorage.setItem('piano_system_v6', JSON.stringify(data));
     }
 
     function formatTime(totalSecs) {
@@ -578,15 +631,6 @@
       const secs = totalSecs % 60;
       const pad = (num) => String(num).padStart(2, '0');
       return `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
-    }
-
-    function calculateETA() {
-      if (remainingSeconds <= 0) return "COMPLETADO";
-      const now = new Date();
-      const finishTime = new Date(now.getTime() + (remainingSeconds * 1000));
-      const hrs = String(finishTime.getHours()).padStart(2, '0');
-      const mins = String(finishTime.getMinutes()).padStart(2, '0');
-      return `${hrs}:${mins}`;
     }
 
     function addSecond() {
@@ -607,20 +651,11 @@
     function updateUI() {
       timerDisplay.textContent = formatTime(remainingSeconds);
       
-      const etaTime = calculateETA();
-      if (etaTime === "COMPLETADO") {
-        etaDisplay.textContent = "¡MISIÓN COMPLETADA HOY!";
-      } else {
-        const statusPrefix = timerInterval ? "FIN ESTIMADO" : "TERMINARÍAS A LAS";
-        etaDisplay.textContent = `${statusPrefix}: ${etaTime}`;
-      }
-
       const elapsedDaily = DAILY_TARGET_SECONDS - remainingSeconds;
       const dailyPercent = Math.min((elapsedDaily / DAILY_TARGET_SECONDS) * 100, 100);
       progressBar.style.width = dailyPercent + '%';
 
       levelVal.textContent = `LVL ${currentLevel}`;
-      rankVal.textContent = getRankName(currentLevel);
       streakVal.textContent = `🔥 ${streakDays} DÍAS`;
       
       const totalHrs = Math.floor(totalSecondsPracticed / 3600);
@@ -628,9 +663,13 @@
       totalTimeVal.textContent = `${totalHrs}h ${totalMins}m`;
 
       const expRequired = getExpRequiredForLevel(currentLevel);
-      expText.textContent = `${currentExp} / ${expRequired} EXP`;
-      const expPercent = Math.min((currentExp / expRequired) * 100, 100);
+      const expPercent = Math.min(Math.round((currentExp / expRequired) * 100), 100);
+      
       expBar.style.width = expPercent + '%';
+      expPercentText.textContent = `${expPercent}%`;
+      
+      miniExpBar.style.width = expPercent + '%';
+      miniExpText.textContent = `${expPercent}%`;
     }
 
     function startTimer() {
@@ -688,7 +727,7 @@
     }
 
     function resetTimer() {
-      if (confirm('¿Quieres reiniciar el temporizador de la misión de hoy? (Tus estadísticas globales se mantendrán)')) {
+      if (confirm('¿Quieres reiniciar el temporizador de la misión de hoy?')) {
         pauseTimer();
         remainingSeconds = DAILY_TARGET_SECONDS;
         updateUI();
